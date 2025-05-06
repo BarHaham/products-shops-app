@@ -19,16 +19,14 @@ const Plugin: FC = () => {
 
   useEffect(() => {
     const fetchMostExpensiveProduct = async () => {
-      try {
+            try {
         const response = await products.queryProducts().find();
         const productsList = response.items;
-
         if (!productsList || productsList.length === 0) {
           setError('No products found.');
           setIsLoading(false);
           return;
         }
-
         const nonDiscounted = productsList.filter((item) => {
           if (!item.priceData || item.priceData.price == null) return false;
           const hasDiscount =
@@ -36,19 +34,16 @@ const Plugin: FC = () => {
             item.priceData.discountedPrice < item.priceData.price;
           return !hasDiscount;
         });
-
         if (nonDiscounted.length === 0) {
           setError('No non-discounted products found.');
           setIsLoading(false);
           return;
         }
-
         const mostExpensive = nonDiscounted.reduce((max, item) =>
           (item.priceData?.price || 0) > (max.priceData?.price || 0)
             ? item
             : max
         );
-
         setProduct(mostExpensive);
       } catch (err) {
         console.error(err);
@@ -60,6 +55,9 @@ const Plugin: FC = () => {
 
     fetchMostExpensiveProduct();
   }, []);
+
+  const discountPageUrl =
+    'https://manage.wix.com/dashboard/b8bf27b3-dc00-49b3-8939-8dbeedc9d257/app/858fdc50-c2ee-4aba-81fe-06599ae55685/most-expenssive-product-discount?apps-override=8d879c7cd0104268b9fccf93d79265cb&referralInfo=sidebar';
 
   return (
     <div style={{ overflow: 'hidden' }}>
@@ -113,17 +111,9 @@ const Plugin: FC = () => {
                     <Text size="small">
                       {product.priceData?.price} {product.priceData?.currency}
                     </Text>
-                    <Button
-                      size="small"
-                      onClick={() =>
-                        window.open(
-                          'https://manage.wix.com/dashboard/b8bf27b3-dc00-49b3-8939-8dbeedc9d257/app/858fdc50-c2ee-4aba-81fe-06599ae55685/most-expenssive-product-discount?apps-override=8d879c7cd0104268b9fccf93d79265cb&referralInfo=sidebar',
-                          '_blank'
-                        )
-                      }
-                    >
-                      Go to Discount Page
-                    </Button>
+                    <a href={discountPageUrl} target="_top" style={{ textDecoration: 'none' }}>
+                      <Button size="small">Go to Discount Page</Button>
+                    </a>
                   </Box>
                 </Box>
               ) : null}
